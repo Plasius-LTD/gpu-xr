@@ -1,6 +1,13 @@
 # @plasius/gpu-xr
 
-[![npm version](https://img.shields.io/npm/v/@plasius/gpu-xr)](https://www.npmjs.com/package/@plasius/gpu-xr)
+[![npm version](https://img.shields.io/npm/v/@plasius/gpu-xr.svg)](https://www.npmjs.com/package/@plasius/gpu-xr)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/Plasius-LTD/gpu-xr/ci.yml?branch=main&label=build&style=flat)](https://github.com/Plasius-LTD/gpu-xr/actions/workflows/ci.yml)
+[![coverage](https://img.shields.io/codecov/c/github/Plasius-LTD/gpu-xr)](https://codecov.io/gh/Plasius-LTD/gpu-xr)
+[![License](https://img.shields.io/github/license/Plasius-LTD/gpu-xr)](./LICENSE)
+[![Code of Conduct](https://img.shields.io/badge/code%20of%20conduct-yes-blue.svg)](./CODE_OF_CONDUCT.md)
+[![Security Policy](https://img.shields.io/badge/security%20policy-yes-orange.svg)](./SECURITY.md)
+[![Changelog](https://img.shields.io/badge/changelog-md-blue.svg)](./CHANGELOG.md)
+
 [![license](https://img.shields.io/github/license/Plasius-LTD/gpu-xr)](./LICENSE)
 
 Framework-agnostic WebXR session management for Plasius GPU rendering projects.
