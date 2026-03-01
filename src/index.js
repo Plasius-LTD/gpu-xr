@@ -56,7 +56,7 @@ function assertSessionMode(mode) {
   if (!xrSessionModes.includes(mode)) {
     const available = xrSessionModes.join(", ");
     throw new Error(
-      `Unknown XR session mode \"${mode}\". Available modes: ${available}.`
+      `Unknown XR session mode "${mode}". Available modes: ${available}.`
     );
   }
 }
