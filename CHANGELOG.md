@@ -11,6 +11,20 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 - **Added**
+  - (placeholder)
+
+- **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
+  - (placeholder)
+
+## [0.1.7] - 2026-03-14
+
+- **Added**
   - Added XR frame-rate capability helpers for current, supported, and
     updatable runtime targets.
   - Added XR performance hints that align immersive sessions with `render` /
@@ -90,3 +104,4 @@ All notable changes to this project will be documented in this file.
 [0.1.1]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.1
 [0.1.2]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.2
 [0.1.6]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.6
+[0.1.7]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.7
