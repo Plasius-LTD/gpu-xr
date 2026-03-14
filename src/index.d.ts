@@ -13,6 +13,11 @@ export interface XrStoreState {
   isEntering: boolean;
   lastError: string | null;
   supportedModes: Partial<Record<XrSessionMode, boolean>>;
+  currentFrameRate: number | null;
+  targetFrameRate: number | null;
+  supportedFrameRates: readonly number[];
+  canUpdateTargetFrameRate: boolean;
+  workerBudgetProfile: XrWorkerBudgetProfile | null;
 }
 
 export interface XrStore {
@@ -41,6 +46,39 @@ export interface XrManagerOptions {
   onSessionEnd?: () => void;
 }
 
+export type XrWorkerBudgetProfile = "realtime" | "xr";
+
+export interface XrFrameRateCapabilitiesOptions {
+  mode?: XrSessionMode;
+  fallbackFrameRates?: readonly number[];
+  defaultFrameRate?: number;
+}
+
+export interface XrFrameRateCapabilities {
+  mode: XrSessionMode;
+  currentFrameRate: number | null;
+  supportedFrameRates: readonly number[];
+  refreshRateHz: number;
+  canUpdateTargetFrameRate: boolean;
+}
+
+export interface XrPerformanceHintOptions extends XrFrameRateCapabilitiesOptions {
+  session?: XRSession | null;
+  preferredFrameRates?: readonly number[];
+}
+
+export interface XrPerformanceHint extends XrFrameRateCapabilities {
+  preferredFrameRates: readonly number[];
+  targetFrameRate: number;
+  targetFrameTimeMs: number;
+  workerBudget: Readonly<{
+    queueClass: typeof xrWorkerQueueClass;
+    schedulerMode: typeof xrWorkerSchedulerMode;
+    profile: XrWorkerBudgetProfile;
+  }>;
+  rationale: readonly string[];
+}
+
 export interface XrManager {
   store: XrStore;
   getState(): XrStoreState;
@@ -48,14 +86,22 @@ export interface XrManager {
   probeSupport(
     modes?: XrSessionMode[]
   ): Promise<Partial<Record<XrSessionMode, boolean>>>;
+  getFrameRateCapabilities(
+    options?: XrFrameRateCapabilitiesOptions & { session?: XRSession | null }
+  ): XrFrameRateCapabilities;
+  getPerformanceHint(options?: XrPerformanceHintOptions): XrPerformanceHint;
   enterSession(mode?: XrSessionMode, sessionInit?: XRSessionInit): Promise<XRSession>;
   enterVr(sessionInit?: XRSessionInit): Promise<XRSession>;
+  setTargetFrameRate(frameRate: number): Promise<number>;
   exitSession(): Promise<boolean>;
   dispose(): Promise<void>;
 }
 
 export const xrSessionModes: readonly XrSessionMode[];
 export const xrReferenceSpaceTypes: readonly XrReferenceSpaceType[];
+export const xrWorkerQueueClass: "render";
+export const xrWorkerSchedulerMode: "dag";
+export const defaultXrWorkerBudgetProfile: "xr";
 export const defaultVrSessionInit: Readonly<XRSessionInit>;
 
 export function mergeXrSessionInit(
@@ -69,6 +115,20 @@ export function isXrModeSupported(
 ): Promise<boolean>;
 
 export function requestXrSession(options?: RequestXrSessionOptions): Promise<XRSession>;
+
+export function readXrFrameRateCapabilities(
+  session: XRSession | null | undefined,
+  options?: XrFrameRateCapabilitiesOptions
+): XrFrameRateCapabilities;
+
+export function createXrPerformanceHint(
+  options?: XrPerformanceHintOptions
+): XrPerformanceHint;
+
+export function updateXrTargetFrameRate(
+  session: XRSession,
+  frameRate: number
+): Promise<number>;
 
 export function createXrStore(initialState?: Partial<XrStoreState>): XrStore;
 

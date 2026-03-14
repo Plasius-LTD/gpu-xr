@@ -11,10 +11,17 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 - **Added**
-  - (placeholder)
+  - Added XR frame-rate capability helpers for current, supported, and
+    updatable runtime targets.
+  - Added XR performance hints that align immersive sessions with `render` /
+    `dag` worker-budget metadata for adaptive performance.
+  - Added XR manager methods and store state for observing and updating active
+    session frame targets.
+  - Added ADR, TDR, and design docs for XR adaptive-performance integration.
 
 - **Changed**
-  - (placeholder)
+  - Clarified README guidance for negotiated XR frame targets and worker-budget
+    alignment.
 
 - **Fixed**
   - (placeholder)

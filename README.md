@@ -39,14 +39,39 @@ const session = await xr.enterVr({
 await xr.exitSession();
 ```
 
+## Adaptive Performance Integration
+
+`@plasius/gpu-xr` now exposes XR runtime frame-rate hints so
+`@plasius/gpu-performance` can negotiate platform-native frame targets while
+`@plasius/gpu-renderer` and `@plasius/gpu-worker` stay aligned on the `xr`
+worker budget profile.
+
+```js
+import { createXrManager } from "@plasius/gpu-xr";
+
+const xr = createXrManager();
+await xr.enterVr();
+
+const hint = xr.getPerformanceHint({ preferredFrameRates: [90, 72] });
+console.log(hint.targetFrameRate, hint.workerBudget);
+
+await xr.setTargetFrameRate(hint.targetFrameRate);
+```
+
 ## API
 
 - `isXrModeSupported(mode, options)`
 - `requestXrSession(options)`
+- `readXrFrameRateCapabilities(session, options)`
+- `createXrPerformanceHint(options)`
+- `updateXrTargetFrameRate(session, frameRate)`
 - `createXrStore(initialState)`
 - `createXrManager(options)`
 - `mergeXrSessionInit(base, override)`
 - `defaultVrSessionInit`
+- `xrWorkerQueueClass`
+- `xrWorkerSchedulerMode`
+- `defaultXrWorkerBudgetProfile`
 
 ## Demo
 
@@ -72,5 +97,8 @@ npm run pack:check
 ## Files
 
 - `src/index.js`: XR runtime/session manager and store.
+- `src/index.d.ts`: public API typings.
 - `tests/package.test.js`: Unit tests for support probing and lifecycle handling.
 - `docs/adrs/*`: XR architecture decisions.
+- `docs/tdrs/*`: XR technical direction records.
+- `docs/design/*`: XR integration design notes.
