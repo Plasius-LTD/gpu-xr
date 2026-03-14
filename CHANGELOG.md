@@ -22,8 +22,9 @@ All notable changes to this project will be documented in this file.
 - **Changed**
   - Clarified README guidance for negotiated XR frame targets and worker-budget
     alignment.
-  - Updated GitHub Actions workflows to run JavaScript actions on Node 24 and
-    refreshed core workflow action versions.
+  - Updated GitHub Actions workflows to run JavaScript actions on Node 24,
+    refreshed core workflow action versions, and switched Codecov uploads to
+    the Codecov CLI.
 
 - **Fixed**
   - (placeholder)
