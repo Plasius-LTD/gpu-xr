@@ -22,6 +22,8 @@ All notable changes to this project will be documented in this file.
 - **Changed**
   - Clarified README guidance for negotiated XR frame targets and worker-budget
     alignment.
+  - Updated GitHub Actions workflows to run JavaScript actions on Node 24 and
+    refreshed core workflow action versions.
 
 - **Fixed**
   - (placeholder)
