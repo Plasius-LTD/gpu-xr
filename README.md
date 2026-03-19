@@ -84,6 +84,10 @@ npm run demo
 
 Then open `http://localhost:8000/gpu-xr/demo/`.
 
+The demo is lifecycle-first. It does not mount a 3D canvas on its own; it
+shows XR capability and session state, and explains that a renderer surface
+must be bound separately.
+
 ## Development Checks
 
 ```sh

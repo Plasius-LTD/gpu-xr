@@ -10,6 +10,12 @@
     <main class="app">
       <h1>@plasius/gpu-xr</h1>
       <p class="subtitle">WebXR session lifecycle demo (no Three.js).</p>
+      <section class="display-state" aria-live="polite">
+        <p id="displayBadge" class="display-badge">Lifecycle demo</p>
+        <p id="displayDetails" class="display-details">
+          No 3D canvas is mounted in this demo by design.
+        </p>
+      </section>
       <div class="panel">
         <p id="support">Checking XR support...</p>
         <button id="enter" disabled>Enter VR</button>

@@ -20,6 +20,45 @@ body {
   opacity: 0.85;
 }
 
+.display-state {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: rgba(12, 20, 35, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.display-badge {
+  display: inline-flex;
+  margin: 0 0 0.45rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(173, 199, 255, 0.14);
+}
+
+.display-badge[data-tone="success"] {
+  background: rgba(74, 201, 135, 0.16);
+  border-color: rgba(74, 201, 135, 0.32);
+}
+
+.display-badge[data-tone="warn"] {
+  background: rgba(255, 189, 89, 0.16);
+  border-color: rgba(255, 189, 89, 0.32);
+}
+
+.display-badge[data-tone="error"] {
+  background: rgba(255, 102, 102, 0.16);
+  border-color: rgba(255, 102, 102, 0.32);
+}
+
+.display-details {
+  margin: 0;
+  opacity: 0.88;
+}
+
 .panel {
   display: flex;
   align-items: center;
