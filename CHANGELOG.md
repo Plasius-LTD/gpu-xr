@@ -22,6 +22,20 @@ All notable changes to this project will be documented in this file.
 - **Security**
   - (placeholder)
 
+## [0.1.8] - 2026-03-23
+
+- **Added**
+  - (placeholder)
+
+- **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
+  - (placeholder)
+
 ## [0.1.7] - 2026-03-14
 
 - **Added**
@@ -105,3 +119,4 @@ All notable changes to this project will be documented in this file.
 [0.1.2]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.2
 [0.1.6]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.6
 [0.1.7]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.7
+[0.1.8]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.8
