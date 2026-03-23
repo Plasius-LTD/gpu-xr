@@ -1,89 +1,91 @@
-import { createXrManager } from "../src/index.js";
+import {
+  createXrPerformanceHint,
+  isXrModeSupported,
+} from "../dist/index.js";
+import { mountGpuShowcase } from "../node_modules/@plasius/gpu-shared/dist/index.js";
 
-const supportEl = document.querySelector("#support");
-const enterBtn = document.querySelector("#enter");
-const exitBtn = document.querySelector("#exit");
-const logEl = document.querySelector("#log");
-const displayBadge = document.querySelector("#displayBadge");
-const displayDetails = document.querySelector("#displayDetails");
-
-const appendLog = (message) => {
-  const line = `[${new Date().toISOString()}] ${message}`;
-  logEl.textContent = `${line}\n${logEl.textContent}`;
-};
-
-function setDisplayState(badge, details, tone = "info") {
-  if (displayBadge) {
-    displayBadge.textContent = badge;
-    displayBadge.dataset.tone = tone;
-  }
-  if (displayDetails) {
-    displayDetails.textContent = details;
-    displayDetails.dataset.tone = tone;
-  }
+const root = globalThis.document?.getElementById("app");
+if (!root) {
+  throw new Error("XR demo root element was not found.");
 }
 
-const manager = createXrManager({
-  onSessionStart: (_session, mode) => {
-    appendLog(`XR session started (${mode}).`);
-    enterBtn.disabled = true;
-    exitBtn.disabled = false;
-    setDisplayState(
-      "XR session active",
-      "Lifecycle is active, but this demo still does not bind a renderer canvas. " +
-        "Use @plasius/gpu-renderer with this session for a 3D surface.",
-      "success"
-    );
-  },
-  onSessionEnd: () => {
-    appendLog("XR session ended.");
-    enterBtn.disabled = false;
-    exitBtn.disabled = true;
-    setDisplayState(
-      "Lifecycle demo",
-      "The XR session ended. This demo tracks capability and session state only.",
-      "warn"
-    );
-  },
-});
+const immersiveVrSupported = await isXrModeSupported("immersive-vr", {
+  navigator: globalThis.navigator,
+}).catch(() => false);
 
-try {
-  const support = await manager.probeSupport(["immersive-vr"]);
-  if (support["immersive-vr"]) {
-    supportEl.textContent = "immersive-vr is supported.";
-    enterBtn.disabled = false;
-    setDisplayState(
-      "Lifecycle demo",
-      "XR capability is available. This demo verifies session lifecycle, not 3D rendering.",
-      "info"
-    );
-    appendLog("XR support detected for immersive-vr.");
-  } else {
-    supportEl.textContent = "immersive-vr is not supported in this browser/device.";
-    setDisplayState(
-      "XR unavailable",
-      "No 3D canvas is mounted here, and immersive-vr support is not available on this device.",
-      "error"
-    );
-    appendLog("XR support not available.");
-  }
-} catch (error) {
-  const message = error instanceof Error ? error.message : String(error);
-  supportEl.textContent = "Unable to probe XR support.";
-  setDisplayState("XR probe failed", message, "error");
-  appendLog(`XR probe failed: ${message}`);
+function createState() {
+  return {
+    immersiveVrSupported,
+    targetMode: immersiveVrSupported ? "immersive-vr" : "inline",
+  };
 }
 
-enterBtn.addEventListener("click", async () => {
-  try {
-    await manager.enterVr({ optionalFeatures: ["depth-sensing"] });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    setDisplayState("Enter VR failed", message, "error");
-    appendLog(`Failed to enter VR: ${message}`);
-  }
-});
+function updateState(state, scene) {
+  state.targetMode = scene.stress || !state.immersiveVrSupported ? "inline" : "immersive-vr";
+  return state;
+}
 
-exitBtn.addEventListener("click", async () => {
-  await manager.exitSession();
+function describeState(state) {
+  const preferredFrameRates =
+    state.targetMode === "immersive-vr" ? [90, 72, 60] : [60];
+  const hint = createXrPerformanceHint({
+    mode: state.targetMode,
+    preferredFrameRates,
+    fallbackFrameRates: preferredFrameRates,
+  });
+
+  return {
+    status: `XR ready · ${state.targetMode} target`,
+    details:
+      state.immersiveVrSupported
+        ? "The scene remains on a desktop canvas here, but gpu-xr is negotiating headset-native targets and worker-budget metadata against the same family showcase."
+        : "immersive-vr is unavailable here, so the demo falls back to inline targets while still exercising the gpu-xr performance contract.",
+    sceneMetrics: [
+      `immersive-vr support: ${state.immersiveVrSupported ? "yes" : "no"}`,
+      `target mode: ${state.targetMode}`,
+      `target frame rate: ${hint.targetFrameRate} Hz`,
+      `preferred rates: ${hint.preferredFrameRates.join(", ")}`,
+    ],
+    qualityMetrics: [
+      `target frame time: ${hint.targetFrameTimeMs.toFixed(2)} ms`,
+      `worker queue class: ${hint.workerBudget.queueClass}`,
+      `scheduler mode: ${hint.workerBudget.schedulerMode}`,
+      `budget profile: ${hint.workerBudget.profile}`,
+    ],
+    debugMetrics: [
+      `rationale lines: ${hint.rationale.length}`,
+      `mode family: ${state.targetMode === "immersive-vr" ? "headset" : "inline"}`,
+      `stress fallback: ${state.targetMode === "inline" ? "active" : "inactive"}`,
+      `scene continuity: preserved`,
+    ],
+    notes: [
+      "The 3D scene now mounts by default instead of leaving gpu-xr as a lifecycle-only placeholder.",
+      "gpu-xr still owns frame-target negotiation and worker-budget hints rather than trying to become a renderer package.",
+      "Stress mode forces the demo back to inline pacing so the target negotiation stays visible.",
+    ],
+    textState: {
+      immersiveVrSupported: state.immersiveVrSupported,
+      targetMode: state.targetMode,
+      targetFrameRate: hint.targetFrameRate,
+      workerBudget: hint.workerBudget,
+    },
+    visuals: {
+      reflectionStrength: state.targetMode === "immersive-vr" ? 0.2 : 0.12,
+      shadowAccent: state.targetMode === "immersive-vr" ? 0.08 : 0.04,
+      flagMotion: state.targetMode === "immersive-vr" ? 0.58 : 0.48,
+      waveAmplitude: state.targetMode === "immersive-vr" ? 0.72 : 0.58,
+    },
+  };
+}
+
+await mountGpuShowcase({
+  root,
+  focus: "performance",
+  packageName: "@plasius/gpu-xr",
+  title: "XR Frame Target Harbor Validation",
+  subtitle:
+    "A shared 3D harbor scene driven by gpu-xr frame-target negotiation and worker-budget hints instead of a state-only lifecycle panel.",
+  createState,
+  updateState,
+  describeState,
 });
