@@ -84,9 +84,11 @@ npm run demo
 
 Then open `http://localhost:8000/gpu-xr/demo/`.
 
-The demo is lifecycle-first. It does not mount a 3D canvas on its own; it
-shows XR capability and session state, and explains that a renderer surface
-must be bound separately.
+The demo mounts the shared `@plasius/gpu-shared` 3D harbor surface and keeps XR
+capability, target mode, and worker-budget negotiation visible in context. It
+stays browser-safe by rendering on the shared scene while `@plasius/gpu-xr`
+continues to own XR support probing, frame-target hints, and session metadata
+instead of a package-local renderer copy.
 
 ## Development Checks
 

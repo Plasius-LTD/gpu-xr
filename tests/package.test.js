@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -395,4 +396,29 @@ test("dispose exits active session and resets store", async () => {
   assert.equal(state.mode, null);
   assert.equal(state.isEntering, false);
   assert.deepEqual(state.supportedModes, {});
+});
+
+test("demo imports gpu-shared through the public package surface", () => {
+  const demoSource = readFileSync(new URL("../demo/main.js", import.meta.url), "utf8");
+  const demoHtml = readFileSync(new URL("../demo/index.html", import.meta.url), "utf8");
+
+  assert.match(demoSource, /from "@plasius\/gpu-shared"/);
+  assert.doesNotMatch(demoSource, /node_modules\/@plasius\/gpu-shared\/dist/);
+  assert.match(demoHtml, /<script type="importmap">/);
+  assert.match(
+    demoHtml,
+    /"@plasius\/gpu-shared"\s*:\s*"\.\.\/node_modules\/@plasius\/gpu-shared\/dist\/index\.js"/,
+  );
+});
+
+test("README documents the live 3D XR staging demo", () => {
+  const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
+
+  assert.match(readme, /mounts the shared `@plasius\/gpu-shared` 3D harbor surface/i);
+  assert.match(
+    readme,
+    /XR\s+capability,\s+target\s+mode,\s+and\s+worker-budget\s+negotiation\s+visible\s+in\s+context/i,
+  );
+  assert.doesNotMatch(readme, /The demo is lifecycle-first/i);
+  assert.doesNotMatch(readme, /does not mount a 3D canvas/i);
 });

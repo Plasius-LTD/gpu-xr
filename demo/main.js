@@ -2,7 +2,7 @@ import {
   createXrPerformanceHint,
   isXrModeSupported,
 } from "../dist/index.js";
-import { mountGpuShowcase } from "../node_modules/@plasius/gpu-shared/dist/index.js";
+import { mountGpuShowcase } from "@plasius/gpu-shared";
 
 const root = globalThis.document?.getElementById("app");
 if (!root) {
