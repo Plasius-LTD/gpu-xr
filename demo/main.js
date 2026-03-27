@@ -61,7 +61,7 @@ function describeState(state) {
     notes: [
       "The 3D scene now mounts by default instead of leaving gpu-xr as a lifecycle-only placeholder.",
       "gpu-xr still owns frame-target negotiation and worker-budget hints rather than trying to become a renderer package.",
-      "Stress mode forces the demo back to inline pacing so the target negotiation stays visible.",
+      "Stress mode forces the demo back to inline pacing so the target negotiation stays visible against the same moonlit harbor.",
     ],
     textState: {
       immersiveVrSupported: state.immersiveVrSupported,
@@ -84,7 +84,7 @@ await mountGpuShowcase({
   packageName: "@plasius/gpu-xr",
   title: "XR Frame Target Harbor Validation",
   subtitle:
-    "A shared 3D harbor scene driven by gpu-xr frame-target negotiation and worker-budget hints instead of a state-only lifecycle panel.",
+    "A moonlit shared harbor scene driven by gpu-xr frame-target negotiation and worker-budget hints instead of a state-only lifecycle panel.",
   createState,
   updateState,
   describeState,
