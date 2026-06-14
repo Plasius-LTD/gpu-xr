@@ -1,6 +1,6 @@
 {
   "name": "@plasius/gpu-xr",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Framework-agnostic WebXR session management for Plasius GPU rendering projects.",
   "type": "module",
   "sideEffects": false,
