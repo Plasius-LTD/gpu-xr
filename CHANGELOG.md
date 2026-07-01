@@ -14,6 +14,20 @@ All notable changes to this project will be documented in this file.
   - (placeholder)
 
 - **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
+  - (placeholder)
+
+## [0.1.16] - 2026-07-01
+
+- **Added**
+  - (placeholder)
+
+- **Changed**
   - Updated the runtime `@plasius/gpu-shared` dependency baseline to
     `^1.0.2`.
   - (placeholder)
@@ -200,3 +214,4 @@ All notable changes to this project will be documented in this file.
 [0.1.11]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.11
 [0.1.14]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.14
 [0.1.15]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.15
+[0.1.16]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.16
