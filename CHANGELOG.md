@@ -14,6 +14,8 @@ All notable changes to this project will be documented in this file.
   - (placeholder)
 
 - **Changed**
+  - Updated the runtime `@plasius/gpu-shared` dependency baseline to
+    `^1.0.2`.
   - (placeholder)
 
 - **Fixed**
