@@ -11,16 +11,18 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 - **Added**
-  - (placeholder)
+  - (none)
 
 - **Changed**
-  - (placeholder)
+  - Refreshed the runtime `@plasius/gpu-shared` dependency to `^1.0.13`.
+  - Refreshed ESLint to `^10.7.0` and TypeScript to `^7.0.2`; the package's
+    JavaScript runtime and browser-native public API remain unchanged.
 
 - **Fixed**
-  - (placeholder)
+  - (none)
 
 - **Security**
-  - (placeholder)
+  - Production dependency audit remains clean.
 
 ## [0.1.16] - 2026-07-01
 
