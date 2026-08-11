@@ -7,6 +7,105 @@ export type XrReferenceSpaceType =
   | "bounded-floor"
   | "unbounded";
 
+export type XrWorkerBudgetProfile = "realtime" | "xr";
+export type XrVec3 = [number, number, number];
+export type XrQuaternion = [number, number, number, number];
+export type XrReferenceSpaceLike = XRReferenceSpace | { type: string } | null;
+
+export interface XrPoseSnapshot {
+  position: XrVec3;
+  orientation: XrQuaternion;
+  forward: XrVec3;
+  up: XrVec3;
+  emulatedPosition: boolean;
+  linearVelocity: XrVec3;
+  angularVelocity: XrVec3;
+  transformMatrix: readonly number[];
+  radius: number | null;
+}
+
+export interface XrViewSnapshot {
+  eye: "left" | "right" | "none" | string;
+  position: XrVec3;
+  orientation: XrQuaternion;
+  projectionMatrix: readonly number[];
+  transformMatrix: readonly number[];
+}
+
+export interface XrViewerPoseSnapshot {
+  available: boolean;
+  position: XrVec3;
+  orientation: XrQuaternion;
+  forward: XrVec3;
+  up: XrVec3;
+  emulatedPosition: boolean;
+  views: XrViewSnapshot[];
+}
+
+export interface XrGamepadButtonSnapshot {
+  index: number;
+  pressed: boolean;
+  touched: boolean;
+  value: number;
+}
+
+export interface XrGamepadHapticActuatorSnapshot {
+  index: number;
+  type: string;
+  canPulse: boolean;
+}
+
+export interface XrGamepadSnapshot {
+  id: string;
+  mapping: string;
+  connected: boolean;
+  axes: number[];
+  buttons: XrGamepadButtonSnapshot[];
+  hapticActuators: XrGamepadHapticActuatorSnapshot[];
+}
+
+export interface XrHandJointSnapshot {
+  name: string;
+  pose: XrPoseSnapshot | null;
+}
+
+export interface XrHandSnapshot {
+  joints: XrHandJointSnapshot[];
+}
+
+export interface XrInputSourceSnapshot {
+  id: string;
+  handedness: string;
+  targetRayMode: string;
+  profiles: string[];
+  primaryProfile: string | null;
+  kind: "hand" | "controller" | "pointer";
+  targetRayPose: XrPoseSnapshot | null;
+  gripPose: XrPoseSnapshot | null;
+  gamepad: XrGamepadSnapshot | null;
+  hand: XrHandSnapshot | null;
+  selectPressed: boolean;
+  squeezePressed: boolean;
+  hasHaptics: boolean;
+}
+
+export interface XrFrameSnapshot {
+  timestamp: number;
+  referenceSpaceType: string;
+  viewer: XrViewerPoseSnapshot;
+  inputSources: XrInputSourceSnapshot[];
+  sessionMode: XrSessionMode | null;
+}
+
+export interface XrHapticRequest {
+  amplitude?: number;
+  durationMs?: number;
+  target?: {
+    id?: string | null;
+    handedness?: string | null;
+  };
+}
+
 export interface XrStoreState {
   activeSession: XRSession | null;
   mode: XrSessionMode | null;
@@ -18,6 +117,8 @@ export interface XrStoreState {
   supportedFrameRates: readonly number[];
   canUpdateTargetFrameRate: boolean;
   workerBudgetProfile: XrWorkerBudgetProfile | null;
+  referenceSpaceType: XrReferenceSpaceType;
+  referenceSpace: XrReferenceSpaceLike;
 }
 
 export interface XrStore {
@@ -41,12 +142,11 @@ export interface RequestXrSessionOptions {
 export interface XrManagerOptions {
   navigator?: Navigator | { xr?: unknown };
   defaultMode?: XrSessionMode;
+  referenceSpaceType?: XrReferenceSpaceType;
   baseSessionInit?: XRSessionInit;
   onSessionStart?: (session: XRSession, mode: XrSessionMode) => void;
   onSessionEnd?: () => void;
 }
-
-export type XrWorkerBudgetProfile = "realtime" | "xr";
 
 export interface XrFrameRateCapabilitiesOptions {
   mode?: XrSessionMode;
@@ -83,6 +183,10 @@ export interface XrManager {
   store: XrStore;
   getState(): XrStoreState;
   subscribe(listener: (state: XrStoreState) => void): () => void;
+  getReferenceSpace(): XrReferenceSpaceLike;
+  getReferenceSpaceType(): XrReferenceSpaceType;
+  setReferenceSpaceType(type: XrReferenceSpaceType): Promise<XrReferenceSpaceLike>;
+  requestReferenceSpace(type?: XrReferenceSpaceType): Promise<XrReferenceSpaceLike>;
   probeSupport(
     modes?: XrSessionMode[]
   ): Promise<Partial<Record<XrSessionMode, boolean>>>;
@@ -94,6 +198,31 @@ export interface XrManager {
   enterVr(sessionInit?: XRSessionInit): Promise<XRSession>;
   setTargetFrameRate(frameRate: number): Promise<number>;
   exitSession(): Promise<boolean>;
+  readFrameSnapshot(
+    frame: XRFrame | unknown,
+    options?: {
+      session?: XRSession | null;
+      referenceSpace?: XrReferenceSpaceLike;
+      referenceSpaceType?: XrReferenceSpaceType;
+    }
+  ): XrFrameSnapshot;
+  readInputSnapshot(
+    frame: XRFrame | unknown,
+    options?: {
+      session?: XRSession | null;
+      referenceSpace?: XrReferenceSpaceLike;
+    }
+  ): XrInputSourceSnapshot[];
+  dispatchHapticRequest(
+    request: XrHapticRequest,
+    options?: {
+      inputSources?: XRSession | { inputSources?: Iterable<XRInputSource> } | Iterable<XRInputSource>;
+    }
+  ): Promise<{
+    pulses: number;
+    amplitude: number;
+    durationMs: number;
+  }>;
   dispose(): Promise<void>;
 }
 
@@ -115,6 +244,41 @@ export function isXrModeSupported(
 ): Promise<boolean>;
 
 export function requestXrSession(options?: RequestXrSessionOptions): Promise<XRSession>;
+
+export function readXrViewerPoseSnapshot(
+  frame: XRFrame | unknown,
+  referenceSpace: XrReferenceSpaceLike,
+  options?: {
+    viewerPose?: XRViewerPose | unknown;
+  }
+): XrViewerPoseSnapshot;
+
+export function readXrInputSnapshot(
+  frame: XRFrame | unknown,
+  referenceSpace: XrReferenceSpaceLike,
+  options?: {
+    session?: XRSession | null;
+    inputSources?: Iterable<XRInputSource> | unknown[];
+  }
+): XrInputSourceSnapshot[];
+
+export function readXrFrameSnapshot(
+  frame: XRFrame | unknown,
+  referenceSpace: XrReferenceSpaceLike,
+  options?: {
+    session?: XRSession | null;
+    referenceSpaceType?: XrReferenceSpaceType | string;
+  }
+): XrFrameSnapshot;
+
+export function dispatchXrHapticRequest(
+  inputSources: XRSession | { inputSources?: Iterable<XRInputSource> } | Iterable<XRInputSource> | null,
+  request?: XrHapticRequest
+): Promise<{
+  pulses: number;
+  amplitude: number;
+  durationMs: number;
+}>;
 
 export function readXrFrameRateCapabilities(
   session: XRSession | null | undefined,

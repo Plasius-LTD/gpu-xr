@@ -11,10 +11,15 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 - **Added**
-  - (placeholder)
+  - Added normalized XR viewer, controller, hand, and frame snapshot contracts
+    plus haptic request translation helpers.
+  - Added XR manager reference-space ownership together with
+    `readFrameSnapshot(...)`, `readInputSnapshot(...)`, and
+    `dispatchHapticRequest(...)`.
 
 - **Changed**
-  - (placeholder)
+  - Extended the runtime from session lifecycle management into a shared XR
+    input bridge for multimodal camera and interaction packages.
 
 - **Fixed**
   - (placeholder)

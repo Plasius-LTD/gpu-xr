@@ -14,6 +14,10 @@ Framework-agnostic WebXR session management for Plasius GPU rendering projects.
 This package isolates VR session lifecycle and capability probing so app layers can
 replace Three.js and still keep immersive workflows.
 
+It also provides normalized XR frame, input, hand, controller, and haptic
+snapshots so browser and engine layers can consume one stable contract instead
+of reading raw WebXR objects directly.
+
 Apache-2.0. ESM + CJS builds.
 
 ## Install
@@ -58,6 +62,30 @@ console.log(hint.targetFrameRate, hint.workerBudget);
 await xr.setTargetFrameRate(hint.targetFrameRate);
 ```
 
+## Snapshot Integration
+
+`@plasius/gpu-xr` can now normalize viewer pose, controller state, hand joints,
+and haptic capabilities from the active XR frame:
+
+```js
+import { createXrManager } from "@plasius/gpu-xr";
+
+const xr = createXrManager({ referenceSpaceType: "local-floor" });
+await xr.enterVr();
+
+const frameSnapshot = xr.readFrameSnapshot(frame);
+const inputSnapshot = xr.readInputSnapshot(frame);
+
+console.log(frameSnapshot.viewer?.position);
+console.log(inputSnapshot[0]?.gamepad?.axes);
+
+await xr.dispatchHapticRequest({
+  targetId: inputSnapshot[0]?.id,
+  amplitude: 0.35,
+  durationMs: 24,
+});
+```
+
 ## API
 
 - `isXrModeSupported(mode, options)`
@@ -67,6 +95,10 @@ await xr.setTargetFrameRate(hint.targetFrameRate);
 - `updateXrTargetFrameRate(session, frameRate)`
 - `createXrStore(initialState)`
 - `createXrManager(options)`
+- `readXrViewerPoseSnapshot(frame, referenceSpace, options)`
+- `readXrInputSnapshot(frame, referenceSpace, options)`
+- `readXrFrameSnapshot(frame, referenceSpace, options)`
+- `dispatchXrHapticRequest(inputSources, request)`
 - `mergeXrSessionInit(base, override)`
 - `defaultVrSessionInit`
 - `xrWorkerQueueClass`

@@ -6,9 +6,13 @@ import {
   createXrStore,
   createXrManager,
   defaultXrWorkerBudgetProfile,
+  dispatchXrHapticRequest,
   isXrModeSupported,
   mergeXrSessionInit,
+  readXrFrameSnapshot,
   readXrFrameRateCapabilities,
+  readXrInputSnapshot,
+  readXrViewerPoseSnapshot,
   requestXrSession,
   updateXrTargetFrameRate,
   xrReferenceSpaceTypes,
@@ -25,6 +29,8 @@ class FakeXrSession extends EventTarget {
     this.ended = false;
     this.supportedFrameRates = [...supportedFrameRates];
     this.frameRate = this.supportedFrameRates[0] ?? null;
+    this.referenceSpaceRequests = [];
+    this.inputSources = [];
   }
 
   async end() {
@@ -37,6 +43,11 @@ class FakeXrSession extends EventTarget {
       throw new Error(`Unsupported target frame rate: ${frameRate}`);
     }
     this.frameRate = frameRate;
+  }
+
+  async requestReferenceSpace(type) {
+    this.referenceSpaceRequests.push(type);
+    return { type };
   }
 }
 
@@ -185,6 +196,119 @@ test("readXrFrameRateCapabilities normalizes current and supported XR frame rate
   });
 });
 
+test("viewer and input snapshot helpers normalize frame poses, hands, and controller data", () => {
+  const referenceSpace = { type: "local-floor" };
+  const inputSource = {
+    handedness: "right",
+    targetRayMode: "tracked-pointer",
+    profiles: ["generic-trigger-squeeze-thumbstick"],
+    gamepad: {
+      id: "xr-standard",
+      mapping: "xr-standard",
+      connected: true,
+      axes: [0.1, -0.2, 0.75, 0],
+      buttons: [
+        { pressed: true, touched: true, value: 1 },
+        { pressed: false, touched: false, value: 0.4 },
+      ],
+      hapticActuators: [{ type: "vibration", pulse: async () => true }],
+    },
+    targetRaySpace: { kind: "target" },
+    gripSpace: { kind: "grip" },
+    hand: new Map([
+      [
+        "thumb-tip",
+        { kind: "thumb" },
+      ],
+      [
+        "index-finger-tip",
+        { kind: "index" },
+      ],
+    ]),
+  };
+  const poseForKind = (kind) => ({
+    transform: {
+      position: { x: kind === "viewer" ? 0.25 : 1, y: 1.6, z: 0.5 },
+      orientation: { x: 0, y: 0, z: 0, w: 1 },
+      matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.25, 1.6, 0.5, 1],
+    },
+    emulatedPosition: false,
+    linearVelocity: { x: 0, y: 0, z: 0 },
+    angularVelocity: { x: 0, y: 0, z: 0 },
+    radius: 0.01,
+  });
+  const frame = {
+    predictedDisplayTime: 1234,
+    session: {
+      mode: "immersive-vr",
+      inputSources: [inputSource],
+    },
+    getViewerPose() {
+      return {
+        transform: poseForKind("viewer").transform,
+        emulatedPosition: false,
+        views: [
+          {
+            eye: "left",
+            transform: poseForKind("left").transform,
+            projectionMatrix: new Float32Array(16).fill(1),
+          },
+        ],
+      };
+    },
+    getPose(space) {
+      return poseForKind(space.kind);
+    },
+    getJointPose(jointSpace) {
+      return poseForKind(jointSpace.kind);
+    },
+  };
+
+  const viewer = readXrViewerPoseSnapshot(frame, referenceSpace);
+  assert.equal(viewer.available, true);
+  assert.deepEqual(viewer.position, [0.25, 1.6, 0.5]);
+  assert.equal(viewer.views.length, 1);
+
+  const inputs = readXrInputSnapshot(frame, referenceSpace);
+  assert.equal(inputs.length, 1);
+  assert.equal(inputs[0].hand?.joints.length, 2);
+  assert.equal(inputs[0].gamepad?.buttons[0].pressed, true);
+
+  const snapshot = readXrFrameSnapshot(frame, referenceSpace);
+  assert.equal(snapshot.referenceSpaceType, "local-floor");
+  assert.equal(snapshot.inputSources[0].hasHaptics, true);
+});
+
+test("dispatchXrHapticRequest pulses matching actuators", async () => {
+  let pulses = 0;
+  const inputSources = [
+    {
+      handedness: "right",
+      profiles: ["generic-trigger"],
+      gamepad: {
+        hapticActuators: [
+          {
+            async pulse() {
+              pulses += 1;
+            },
+          },
+        ],
+      },
+    },
+  ];
+
+  const result = await dispatchXrHapticRequest(inputSources, {
+    amplitude: 0.8,
+    durationMs: 32,
+    target: {
+      handedness: "right",
+    },
+  });
+
+  assert.equal(pulses, 1);
+  assert.equal(result.pulses, 1);
+});
+
 test("createXrPerformanceHint aligns XR frame targets with worker budget metadata", () => {
   const hint = createXrPerformanceHint({
     mode: "immersive-vr",
@@ -271,6 +395,8 @@ test("createXrManager tracks lifecycle for enter and exit", async () => {
   assert.equal(manager.getState().isEntering, false);
   assert.equal(manager.getState().targetFrameRate, 90);
   assert.equal(manager.getState().workerBudgetProfile, "xr");
+  assert.equal(manager.getReferenceSpaceType(), "local-floor");
+  assert.equal(manager.getReferenceSpace()?.type, "local-floor");
 
   const exited = await manager.exitSession();
   assert.equal(exited, true);
@@ -324,6 +450,35 @@ test("createXrManager exposes frame-rate capabilities and performance hints", as
   const hint = manager.getPerformanceHint({ preferredFrameRates: [72] });
   assert.equal(hint.targetFrameRate, 72);
   assert.equal(hint.workerBudget.profile, "xr");
+});
+
+test("createXrManager can switch reference spaces and expose frame snapshots", async () => {
+  const fakeXr = new FakeXrSystem(["immersive-vr"]);
+  const manager = createXrManager({ navigator: { xr: fakeXr } });
+  const session = await manager.enterVr();
+
+  await manager.setReferenceSpaceType("bounded-floor");
+  assert.equal(session.referenceSpaceRequests.includes("bounded-floor"), true);
+  assert.equal(manager.getReferenceSpaceType(), "bounded-floor");
+
+  const snapshot = manager.readFrameSnapshot({
+    predictedDisplayTime: 44,
+    session,
+    getViewerPose() {
+      return {
+        transform: {
+          position: { x: 0, y: 1.6, z: 0 },
+          orientation: { x: 0, y: 0, z: 0, w: 1 },
+        },
+        emulatedPosition: false,
+        views: [],
+      };
+    },
+  });
+
+  assert.equal(snapshot.referenceSpaceType, "bounded-floor");
+  assert.equal(snapshot.viewer.available, true);
+  await manager.exitSession();
 });
 
 test("createXrManager can update the active session target frame rate", async () => {
