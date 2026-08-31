@@ -8,8 +8,6 @@
 [![Security Policy](https://img.shields.io/badge/security%20policy-yes-orange.svg)](./SECURITY.md)
 [![Changelog](https://img.shields.io/badge/changelog-md-blue.svg)](./CHANGELOG.md)
 
-[![license](https://img.shields.io/github/license/Plasius-LTD/gpu-xr)](./LICENSE)
-
 Framework-agnostic WebXR session management for Plasius GPU rendering projects.
 This package isolates VR session lifecycle and capability probing so app layers can
 replace Three.js and still keep immersive workflows.
