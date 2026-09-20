@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
   - (placeholder)
 
 - **Security**
+  - Refreshed the lockfile to remove the vulnerable `c8`/`test-exclude` dependency chain.
   - Removed the npm write-token path, added a fail-closed npm 11.5.1-or-newer OIDC guard, and denied fork PR code access to reviewed CI.
   - Moved reviewed CI to explicit GitHub-hosted runners while retaining the same-repository pull-request guard.
   - Added fail-closed source and npm-package admission for the administrative contributor registry and pinned the CI/CD runtime to Node.js 24.18.0 LTS.
