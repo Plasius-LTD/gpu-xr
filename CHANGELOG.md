@@ -10,24 +10,22 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-- **Added**
-  - (placeholder)
+### Fixed
+
+- Restore automatic schema-template npm publication and validate renewed trusted publishing with a sealed package inventory.
 
 - **Changed**
   - Refreshed compatible @plasius/* lockfile resolutions to the latest published releases.
  - Bound npm publication to the exact prepared `main` commit after successful push-triggered CI.
-  - (placeholder)
 
 - **Fixed**
   - Added exact-commit CI dispatch and disabled package-manager cache finalization in both hosted validation jobs.
-  - (placeholder)
 
 - **Security**
   - Refreshed the lockfile to remove the vulnerable `c8`/`test-exclude` dependency chain.
   - Removed the npm write-token path, added a fail-closed npm 11.5.1-or-newer OIDC guard, and denied fork PR code access to reviewed CI.
   - Moved reviewed CI to explicit GitHub-hosted runners while retaining the same-repository pull-request guard.
   - Added fail-closed source and npm-package admission for the administrative contributor registry and pinned the CI/CD runtime to Node.js 24.18.0 LTS.
-  - (placeholder)
 
 ## [0.1.17] - 2026-07-11
 
@@ -48,74 +46,54 @@ All notable changes to this project will be documented in this file.
 ## [0.1.16] - 2026-07-01
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
   - Updated the runtime `@plasius/gpu-shared` dependency baseline to
     `^1.0.2`.
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.1.15] - 2026-06-22
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.1.14] - 2026-06-22
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.1.11] - 2026-05-13
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.1.10] - 2026-05-13
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.1.9] - 2026-04-02
 
@@ -132,21 +110,16 @@ All notable changes to this project will be documented in this file.
     of an import-map-backed package import.
 
 - **Security**
-  - (placeholder)
 
 ## [0.1.8] - 2026-03-23
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.1.7] - 2026-03-14
 
@@ -167,24 +140,18 @@ All notable changes to this project will be documented in this file.
     the Codecov CLI.
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.1.6] - 2026-03-04
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.1.2] - 2026-03-01
 
@@ -203,16 +170,12 @@ All notable changes to this project will be documented in this file.
 ## [0.1.1] - 2026-02-28
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.1.0] - 2026-02-11
 
@@ -220,13 +183,10 @@ All notable changes to this project will be documented in this file.
   - Initial release.
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 [0.1.1]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.1
 [0.1.2]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.2
 [0.1.6]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.6
