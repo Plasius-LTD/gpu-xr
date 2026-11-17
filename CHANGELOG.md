@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.18] - 2026-11-17
+
 ### Fixed
 
 - Restore automatic schema-template npm publication and validate renewed trusted publishing with a sealed package inventory.
@@ -199,3 +201,6 @@ All notable changes to this project will be documented in this file.
 [0.1.15]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.15
 [0.1.16]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.16
 [0.1.17]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.17
+
+[Unreleased]: https://github.com/Plasius-LTD/gpu-xr/compare/v0.1.18...HEAD
+[0.1.18]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.18
