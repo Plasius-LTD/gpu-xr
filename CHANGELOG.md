@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.19] - 2026-11-22
+
 - Refresh npm dependencies and require patched glob traversal in coverage tooling.
 
 ## [0.1.18] - 2026-11-17
@@ -204,5 +206,6 @@ All notable changes to this project will be documented in this file.
 [0.1.16]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.16
 [0.1.17]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.17
 
-[Unreleased]: https://github.com/Plasius-LTD/gpu-xr/compare/v0.1.18...HEAD
+[Unreleased]: https://github.com/Plasius-LTD/gpu-xr/compare/v0.1.19...HEAD
 [0.1.18]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.18
+[0.1.19]: https://github.com/Plasius-LTD/gpu-xr/releases/tag/v0.1.19
