@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Refresh npm dependencies and require patched glob traversal in coverage tooling.
+
 ## [0.1.18] - 2026-11-17
 
 ### Fixed
